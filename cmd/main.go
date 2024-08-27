@@ -42,6 +42,9 @@ func main() {
 	// Hello, World route!
 	r.HandleFunc("/", controllers.Home).Methods("GET")
 
+	// Mushrooms routes
+	r.HandleFunc("/mushrooms", controllers.CreateMushroom).Methods("POST")
+
 	// Start server
 	fmt.Println("Server is running: 127.0.0.1:8080 🏃")
 	if err := http.ListenAndServe(":8080", r); err != nil {

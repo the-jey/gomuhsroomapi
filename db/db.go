@@ -23,6 +23,14 @@ func NewMongoClient() *mongo.Client {
 	return client
 }
 
+func GetDatabase() *mongo.Database {
+	return NewMongoClient().Database("gomushroomapi")
+}
+
+func GetMushroomsCollection() *mongo.Collection {
+	return GetDatabase().Collection("muhsrooms")
+}
+
 func DisconnectMongoClient(client *mongo.Client) {
 	if err := client.Disconnect(context.TODO()); err != nil {
 		panic("Error when disconnecting MongoDB connection ❎")
