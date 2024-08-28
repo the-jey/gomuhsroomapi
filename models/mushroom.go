@@ -22,6 +22,6 @@ type Mushroom struct {
 	Price     float64            `bson:"price,omitempty" json:"price"`
 	Quantity  int64              `bson:"quantity,omitempty" json:"quantity"`
 	Strenght  Strenght           `bson:"strenght,omitempty" json:"strenght"`
-	CreatedAt time.Time          `bson:"createdAt" json:"createdAt"`
-	UpdatedAt time.Time          `bson:"updatedAt" json:"updatedAt"`
+	CreatedAt time.Time          `bson:"created_at,omitempty" json:"created_at"`
+	UpdatedAt time.Time          `bson:"updated_at,omitempty" json:"updated_at"`
 }
