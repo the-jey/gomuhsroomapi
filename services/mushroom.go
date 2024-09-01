@@ -56,3 +56,37 @@ func GetMushroomByID(id primitive.ObjectID) (*models.Mushroom, string) {
 
 	return m, ""
 }
+
+func GetAllMushrooms() ([]*models.Mushroom, string) {
+	// Get Mushroom collection
+	col := db.GetMushroomsCollection()
+
+	// Create & defer context
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	// Create a mushroom array
+	var mArray []*models.Mushroom
+
+	// Getting a cursor from MongoDB
+	cur, err := col.Find(ctx, bson.D{{}})
+	if err != nil {
+		return mArray, "Error getting all the mushrooms ❌"
+	}
+
+	// Decode the cursor & append to mArray
+	for cur.Next(ctx) {
+		var m *models.Mushroom
+		if err := cur.Decode(&m); err != nil {
+			return mArray, "Error during decoding all the mushrooms ❌"
+		}
+		mArray = append(mArray, m)
+	}
+	// Error during decoding & close the cursor
+	if err := cur.Err(); err != nil {
+		return mArray, "Error with the mongoDB cursor of all the mushrooms ❌"
+	}
+	cur.Close(ctx)
+
+	return mArray, ""
+}

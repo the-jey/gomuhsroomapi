@@ -33,3 +33,14 @@ func CreateMushroom(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(newM)
 }
+
+func GetAllMushrooms(w http.ResponseWriter, r *http.Request) {
+	allM, s := services.GetAllMushrooms()
+	if s != "" {
+		errors.SendJSONErrorResponse(w, s, http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(allM)
+}
