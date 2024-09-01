@@ -43,8 +43,9 @@ func main() {
 	r.HandleFunc("/", controllers.Home).Methods("GET")
 
 	// Mushrooms routes
-	r.HandleFunc("/mushrooms", controllers.CreateMushroom).Methods("POST")
 	r.HandleFunc("/mushrooms", controllers.GetAllMushrooms).Methods("GET")
+	r.HandleFunc("/mushroom", controllers.CreateMushroom).Methods("POST")
+	r.HandleFunc("/mushroom/{id}", controllers.GetOneMushroomByID).Methods("GET")
 
 	// Start server
 	fmt.Println("Server is running: 127.0.0.1:8080 🏃")

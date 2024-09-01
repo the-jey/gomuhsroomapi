@@ -4,9 +4,11 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/gorilla/mux"
 	"github.com/the-jey/gomushroomapi/errors"
 	"github.com/the-jey/gomushroomapi/models"
 	"github.com/the-jey/gomushroomapi/services"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func CreateMushroom(w http.ResponseWriter, r *http.Request) {
@@ -43,4 +45,29 @@ func GetAllMushrooms(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(allM)
+}
+
+func GetOneMushroomByID(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
+
+	id, ok := mux.Vars(r)["id"]
+	if (!ok) || (id == "") {
+		errors.SendJSONErrorResponse(w, "Please give an 'id' parameter ❌", http.StatusBadRequest)
+		return
+	}
+
+	mongoID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		errors.SendJSONErrorResponse(w, "'id' parameter is not valid ❌", http.StatusBadRequest)
+		return
+	}
+
+	m, s := services.GetMushroomByID(mongoID)
+	if s != "" {
+		errors.SendJSONErrorResponse(w, s, http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(m)
 }
