@@ -90,3 +90,30 @@ func GetAllMushrooms() ([]*models.Mushroom, string) {
 
 	return mArray, ""
 }
+
+func DeleteMushroomByID(id primitive.ObjectID) (int64, string) {
+	// Get Mushroom collection
+	col := db.GetMushroomsCollection()
+
+	// Create & defer context
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	// Create a filter
+	filter := bson.M{"_id": id}
+
+	// Delete one document
+	res, err := col.DeleteOne(ctx, filter)
+	if err != nil {
+		return 0, "Error deleting the mushroom by ID ❌"
+	}
+
+	// Check if count == 0
+	count := res.DeletedCount
+	if count == 0 {
+		return count, "Error deleting the mushroom by ID ❌"
+	}
+
+	// Return number of document deleted
+	return res.DeletedCount, ""
+}

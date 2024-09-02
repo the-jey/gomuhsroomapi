@@ -46,6 +46,7 @@ func main() {
 	r.HandleFunc("/mushrooms", controllers.GetAllMushrooms).Methods("GET")
 	r.HandleFunc("/mushroom", controllers.CreateMushroom).Methods("POST")
 	r.HandleFunc("/mushroom/{id}", controllers.GetOneMushroomByID).Methods("GET")
+	r.HandleFunc("/mushroom/{id}", controllers.DeleteOneMushroomByID).Methods("DELETE")
 
 	// Start server
 	fmt.Println("Server is running: 127.0.0.1:8080 🏃")
