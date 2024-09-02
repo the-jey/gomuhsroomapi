@@ -117,3 +117,27 @@ func DeleteMushroomByID(id primitive.ObjectID) (int64, string) {
 	// Return number of document deleted
 	return res.DeletedCount, ""
 }
+
+func DeleteAllMushrooms() (int64, string) {
+	// Get Mushroom collection
+	col := db.GetMushroomsCollection()
+
+	// Create & defer context
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	// Delete one document
+	res, err := col.DeleteMany(ctx, bson.M{})
+	if err != nil {
+		return 0, "Error deleting all the mushrooms ❌"
+	}
+
+	// Check if count == 0
+	count := res.DeletedCount
+	if count == 0 {
+		return count, "Error deleting all the mushrooms ❌"
+	}
+
+	// Return number of document deleted
+	return res.DeletedCount, ""
+}

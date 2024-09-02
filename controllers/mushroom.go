@@ -97,3 +97,15 @@ func DeleteOneMushroomByID(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 	json.NewEncoder(w).Encode(nil)
 }
+
+func DeleteAllMushrooms(w http.ResponseWriter, r *http.Request) {
+	_, s := services.DeleteAllMushrooms()
+	if s != "" {
+		errors.SendJSONErrorResponse(w, s, http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusNoContent)
+	json.NewEncoder(w).Encode(nil)
+}
