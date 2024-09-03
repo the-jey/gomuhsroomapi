@@ -109,3 +109,40 @@ func DeleteAllMushrooms(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 	json.NewEncoder(w).Encode(nil)
 }
+
+func UpdateMushroomByID(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
+
+	id, ok := mux.Vars(r)["id"]
+	if (!ok) || (id == "") {
+		errors.SendJSONErrorResponse(w, "Please give an 'id' parameter ❌", http.StatusBadRequest)
+		return
+	}
+
+	mongoID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		errors.SendJSONErrorResponse(w, "'id' parameter is not valid ❌", http.StatusBadRequest)
+		return
+	}
+
+	var m models.Mushroom
+	if err := json.NewDecoder(r.Body).Decode(&m); err != nil {
+		errors.SendJSONErrorResponse(w, "Error parsing JSON data ❌", http.StatusBadRequest)
+		return
+	}
+
+	s := services.UpdateMushroomByID(mongoID, m)
+	if s != "" {
+		errors.SendJSONErrorResponse(w, s, http.StatusInternalServerError)
+		return
+	}
+
+	updateM, s := services.GetMushroomByID(mongoID)
+	if s != "" {
+		errors.SendJSONErrorResponse(w, s, http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(updateM)
+}

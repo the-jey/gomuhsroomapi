@@ -47,6 +47,7 @@ func main() {
 	r.HandleFunc("/mushrooms", controllers.DeleteAllMushrooms).Methods("DELETE")
 	r.HandleFunc("/mushroom", controllers.CreateMushroom).Methods("POST")
 	r.HandleFunc("/mushroom/{id}", controllers.GetOneMushroomByID).Methods("GET")
+	r.HandleFunc("/mushroom/{id}", controllers.UpdateMushroomByID).Methods("PUT")
 	r.HandleFunc("/mushroom/{id}", controllers.DeleteOneMushroomByID).Methods("DELETE")
 
 	// Start server

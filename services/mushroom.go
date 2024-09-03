@@ -141,3 +141,43 @@ func DeleteAllMushrooms() (int64, string) {
 	// Return number of document deleted
 	return res.DeletedCount, ""
 }
+
+func UpdateMushroomByID(id primitive.ObjectID, m models.Mushroom) string {
+	// Mushroom model validation
+	s := validation.CreateMushroomValidation(&m)
+	if s != "" {
+		return s
+	}
+
+	// Update the time
+	m.UpdatedAt = time.Now()
+
+	// Get Mushroom collection
+	col := db.GetMushroomsCollection()
+
+	// Create & defer context
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	// Create a filter
+	filter := bson.M{"_id": id}
+
+	// Create an update
+	update := bson.M{"$set": m}
+	// update := bson.M{"$set": bson.M{
+	// 	"name":       m.Name,
+	// 	"origin":     m.Origin,
+	// 	"strenght":   m.Strenght,
+	// 	"price":      m.Price,
+	// 	"quantity":   m.Quantity,
+	// 	"updated_at": m.UpdatedAt,
+	// }}
+
+	// Update by ID
+	_, err := col.UpdateOne(ctx, filter, update)
+	if err != nil {
+		return "Error updating by id ❌"
+	}
+
+	return ""
+}
