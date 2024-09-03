@@ -53,3 +53,43 @@ func CreateMushroomValidation(m *models.Mushroom) string {
 
 	return ""
 }
+
+func UpdateMushroomValidation(m *models.Mushroom) string {
+	// 'Name' validation only if field is not empty
+	if m.Name != "" {
+		if (len(m.Name) < 3) || (len(m.Name) > 224) {
+			s := "Mushroom 'name' must be between 3 and 224 characters ❌"
+			return s
+		}
+	}
+
+	// 'Origin' validation only if field is not empty
+	if m.Origin != "" {
+		if (len(m.Origin) < 3) || (len(m.Origin) > 224) {
+			s := "Mushroom 'origin' must be between 3 and 224 characters ❌"
+			return s
+		}
+	}
+
+	// 'Stenght' validation only if field is not empty
+	if m.Strenght != "" {
+		if (m.Strenght != "Weak") && (m.Strenght != "Normal") && (m.Strenght != "Strong") && (m.Strenght != "Delusional") {
+			s := "Mushroom 'strenght' must be of type : 'Weak' | 'Normal' | 'Strong' | 'Delusional' ❌"
+			return s
+		}
+	}
+
+	// Validate the 'Price' field
+	if m.Price < 0 {
+		s := "Mushroom 'price' can't be negative ❌"
+		return s
+	}
+
+	// Validate the 'Quantity' field
+	if m.Quantity < 0 {
+		s := "Mushroom 'quantity' can't be negative ❌"
+		return s
+	}
+
+	return ""
+}

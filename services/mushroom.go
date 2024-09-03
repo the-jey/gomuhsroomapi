@@ -143,8 +143,8 @@ func DeleteAllMushrooms() (int64, string) {
 }
 
 func UpdateMushroomByID(id primitive.ObjectID, m models.Mushroom) string {
-	// Mushroom model validation
-	s := validation.CreateMushroomValidation(&m)
+	// Mushroom model update validation
+	s := validation.UpdateMushroomValidation(&m)
 	if s != "" {
 		return s
 	}
@@ -164,14 +164,6 @@ func UpdateMushroomByID(id primitive.ObjectID, m models.Mushroom) string {
 
 	// Create an update
 	update := bson.M{"$set": m}
-	// update := bson.M{"$set": bson.M{
-	// 	"name":       m.Name,
-	// 	"origin":     m.Origin,
-	// 	"strenght":   m.Strenght,
-	// 	"price":      m.Price,
-	// 	"quantity":   m.Quantity,
-	// 	"updated_at": m.UpdatedAt,
-	// }}
 
 	// Update by ID
 	_, err := col.UpdateOne(ctx, filter, update)
