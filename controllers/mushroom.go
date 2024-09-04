@@ -8,6 +8,7 @@ import (
 	"github.com/the-jey/gomushroomapi/errors"
 	"github.com/the-jey/gomushroomapi/models"
 	"github.com/the-jey/gomushroomapi/services"
+	"github.com/the-jey/gomushroomapi/utils"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -32,8 +33,7 @@ func CreateMushroom(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(newM)
+	utils.SendHttpJSONResponse(w, http.StatusCreated, newM)
 }
 
 func GetAllMushrooms(w http.ResponseWriter, r *http.Request) {
@@ -43,8 +43,7 @@ func GetAllMushrooms(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(allM)
+	utils.SendHttpJSONResponse(w, http.StatusOK, allM)
 }
 
 func GetOneMushroomByID(w http.ResponseWriter, r *http.Request) {
@@ -68,8 +67,7 @@ func GetOneMushroomByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(m)
+	utils.SendHttpJSONResponse(w, http.StatusOK, m)
 }
 
 func DeleteOneMushroomByID(w http.ResponseWriter, r *http.Request) {
@@ -93,9 +91,7 @@ func DeleteOneMushroomByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusNoContent)
-	json.NewEncoder(w).Encode(nil)
+	utils.SendHttpJSONResponse(w, http.StatusNoContent, nil)
 }
 
 func DeleteAllMushrooms(w http.ResponseWriter, r *http.Request) {
@@ -105,9 +101,7 @@ func DeleteAllMushrooms(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusNoContent)
-	json.NewEncoder(w).Encode(nil)
+	utils.SendHttpJSONResponse(w, http.StatusNoContent, nil)
 }
 
 func UpdateMushroomByID(w http.ResponseWriter, r *http.Request) {
@@ -143,6 +137,5 @@ func UpdateMushroomByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(updateM)
+	utils.SendHttpJSONResponse(w, http.StatusOK, updateM)
 }
