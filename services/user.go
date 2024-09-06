@@ -6,18 +6,11 @@ import (
 
 	"github.com/the-jey/gomushroomapi/db"
 	"github.com/the-jey/gomushroomapi/models"
-	"github.com/the-jey/gomushroomapi/validation"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func NewUser(u models.User) (primitive.ObjectID, string) {
-	// Validate the user
-	s := validation.CreateUserValidation(&u)
-	if s == "" {
-		return primitive.NilObjectID, s
-	}
-
 	// Put the updatedAt and createxAt datetime
 	u.UpdatedAt = time.Now()
 	u.CreatedAt = time.Now()

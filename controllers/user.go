@@ -8,6 +8,7 @@ import (
 	"github.com/the-jey/gomushroomapi/models"
 	"github.com/the-jey/gomushroomapi/services"
 	"github.com/the-jey/gomushroomapi/utils"
+	"github.com/the-jey/gomushroomapi/validation"
 )
 
 func RegisterUser(w http.ResponseWriter, r *http.Request) {
@@ -17,6 +18,13 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 	var u models.User
 	if err := json.NewDecoder(r.Body).Decode(&u); err != nil {
 		errors.SendJSONErrorResponse(w, "Error parsing JSON data ❌", http.StatusBadRequest)
+		return
+	}
+
+	// Validate the user fields
+	s := validation.CreateUserValidation(&u)
+	if s != "" {
+		errors.SendJSONErrorResponse(w, s, http.StatusInternalServerError)
 		return
 	}
 

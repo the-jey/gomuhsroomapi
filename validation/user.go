@@ -22,7 +22,7 @@ func CreateUserValidation(u *models.User) string {
 		return s
 	}
 	if (len(u.Username) < 3) || (len(u.Username) > 224) {
-		s := "Mushroom 'name' must be between 3 and 224 characters ❌"
+		s := "'Username' must be between 3 and 224 characters ❌"
 		return s
 	}
 
@@ -46,7 +46,11 @@ func CreateUserValidation(u *models.User) string {
 
 	// 'Password' field
 	if u.Password == "" {
-		s := "Please put an 'password' field ❌"
+		s := "Please put a 'password' field ❌"
+		return s
+	}
+	if (len(u.Password) < 3) || (len(u.Password) > 224) {
+		s := "'Password' must be between 3 and 224 characters ❌"
 		return s
 	}
 
