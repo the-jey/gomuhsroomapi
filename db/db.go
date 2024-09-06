@@ -31,6 +31,10 @@ func GetMushroomsCollection() *mongo.Collection {
 	return GetDatabase().Collection("muhsrooms")
 }
 
+func GetUsersCollection() *mongo.Collection {
+	return GetDatabase().Collection("users")
+}
+
 func DisconnectMongoClient(client *mongo.Client) {
 	if err := client.Disconnect(context.TODO()); err != nil {
 		panic("Error when disconnecting MongoDB connection ❎")

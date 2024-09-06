@@ -50,6 +50,10 @@ func main() {
 	r.HandleFunc("/mushroom/{id}", controllers.UpdateMushroomByID).Methods("PUT")
 	r.HandleFunc("/mushroom/{id}", controllers.DeleteOneMushroomByID).Methods("DELETE")
 
+	// Auth routes
+	r.HandleFunc("/user/new", controllers.RegisterUser).Methods("POST")
+	r.HandleFunc("/user/login", controllers.LoginUser).Methods("POST")
+
 	// Start server
 	fmt.Println("Server is running: 127.0.0.1:8080 🏃")
 	if err := http.ListenAndServe(":8080", r); err != nil {
