@@ -2,6 +2,7 @@ package validation
 
 import (
 	"context"
+	"net/mail"
 	"time"
 
 	"github.com/the-jey/gomushroomapi/db"
@@ -10,8 +11,46 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func CreateUserValidation(u *models.User) {
-	// TODO
+func CreateUserValidation(u *models.User) string {
+	// 'Username' field
+	if u.Username == "" {
+		s := "Please put an 'username' field ❌"
+		return s
+	}
+	if CheckUsernameExist(u.Username) {
+		s := "'username' already exist ❌"
+		return s
+	}
+	if (len(u.Username) < 3) || (len(u.Username) > 224) {
+		s := "Mushroom 'name' must be between 3 and 224 characters ❌"
+		return s
+	}
+
+	// 'Email' field
+	if u.Email == "" {
+		s := "Please put an 'email' field ❌"
+		return s
+	}
+	if !IsValidEmail(u.Email) {
+		s := "Please put a valid email ❌"
+		return s
+	}
+	if CheckUserEmailExist(u.Email) {
+		s := "'email' already exist ❌"
+		return s
+	}
+	if (len(u.Email) < 3) || (len(u.Email) > 224) {
+		s := "User 'email' must be between 3 and 224 characters ❌"
+		return s
+	}
+
+	// 'Password' field
+	if u.Password == "" {
+		s := "Please put an 'password' field ❌"
+		return s
+	}
+
+	return ""
 }
 
 func CheckUserEmailExist(e string) bool {
@@ -46,4 +85,9 @@ func CheckUsernameExist(u string) bool {
 	err := col.FindOne(ctx, filter).Err()
 
 	return err != mongo.ErrNoDocuments
+}
+
+func IsValidEmail(e string) bool {
+	_, err := mail.ParseAddress(e)
+	return err == nil
 }
