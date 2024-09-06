@@ -20,7 +20,13 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO: hash the password with bcrypt
+	// Hash the password with bcrypt
+	hPass, err := utils.HashPassword(u.Password)
+	if err != nil {
+		errors.SendJSONErrorResponse(w, "Error hashing the password ❌", http.StatusInternalServerError)
+		return
+	}
+	u.Password = hPass
 
 	// Create the user
 	id, s := services.NewUser(u)
