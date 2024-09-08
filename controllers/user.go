@@ -4,11 +4,13 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/gorilla/mux"
 	"github.com/the-jey/gomushroomapi/errors"
 	"github.com/the-jey/gomushroomapi/models"
 	"github.com/the-jey/gomushroomapi/services"
 	"github.com/the-jey/gomushroomapi/utils"
 	"github.com/the-jey/gomushroomapi/validation"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func RegisterUser(w http.ResponseWriter, r *http.Request) {
@@ -55,5 +57,39 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func LoginUser(w http.ResponseWriter, r *http.Request) {
+	// TODO: with JWT token implementation
+}
 
+func GetUserByID(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
+
+	id, ok := mux.Vars(r)["id"]
+	if (!ok) || (id == "") {
+		errors.SendJSONErrorResponse(w, "Please give an 'id' parameter ❌", http.StatusBadRequest)
+		return
+	}
+
+	mongoID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		errors.SendJSONErrorResponse(w, "'id' parameter is not valid ❌", http.StatusBadRequest)
+		return
+	}
+
+	u, s := services.GetUserByID(mongoID)
+	if s != "" {
+		errors.SendJSONErrorResponse(w, s, http.StatusInternalServerError)
+		return
+	}
+
+	utils.SendHttpJSONResponse(w, http.StatusOK, u)
+}
+
+func GetAllUsers(w http.ResponseWriter, r *http.Request) {
+	allU, s := services.GetAllUsers()
+	if s != "" {
+		errors.SendJSONErrorResponse(w, s, http.StatusInternalServerError)
+		return
+	}
+
+	utils.SendHttpJSONResponse(w, http.StatusOK, allU)
 }

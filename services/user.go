@@ -37,6 +37,40 @@ func NewUser(u models.User) (primitive.ObjectID, string) {
 	return out.InsertedID.(primitive.ObjectID), ""
 }
 
+func GetAllUsers() ([]*models.User, string) {
+	// Get User collection
+	col := db.GetUsersCollection()
+
+	// Create & defer context
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	var uArray []*models.User
+
+	// Getting a cursor from mongoDB
+	cur, err := col.Find(ctx, bson.M{})
+	if err != nil {
+		return uArray, "Error getting all the users ❌"
+	}
+
+	// Decode the cursor & append uArray
+	for cur.Next(ctx) {
+		var u *models.User
+		if err := cur.Decode(&u); err != nil {
+			return uArray, "Error during the decoding of all the users ❌"
+		}
+		uArray = append(uArray, u)
+	}
+
+	// Error during decoding & close the cursor
+	if err := cur.Err(); err != nil {
+		return uArray, "Error with the mongoDB cursor of all the users ❌"
+	}
+	cur.Close(ctx)
+
+	return uArray, ""
+}
+
 func GetUserByID(id primitive.ObjectID) (*models.User, string) {
 	// Get User collection
 	col := db.GetUsersCollection()
@@ -47,6 +81,44 @@ func GetUserByID(id primitive.ObjectID) (*models.User, string) {
 
 	// Create a filter
 	filter := bson.M{"_id": id}
+
+	var u *models.User
+	if err := col.FindOne(ctx, filter).Decode(&u); err != nil {
+		return u, "Error getting the user by ID ❌"
+	}
+
+	return u, ""
+}
+
+func GetUserByUsername(uname string) (*models.User, string) {
+	// Get User collection
+	col := db.GetUsersCollection()
+
+	// Create & defer context
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	// Create a filter
+	filter := bson.M{"username": uname}
+
+	var u *models.User
+	if err := col.FindOne(ctx, filter).Decode(&u); err != nil {
+		return u, "Error getting the user by ID ❌"
+	}
+
+	return u, ""
+}
+
+func GetUserByEmail(email string) (*models.User, string) {
+	// Get User collection
+	col := db.GetUsersCollection()
+
+	// Create & defer context
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	// Create a filter
+	filter := bson.M{"email": email}
 
 	var u *models.User
 	if err := col.FindOne(ctx, filter).Decode(&u); err != nil {

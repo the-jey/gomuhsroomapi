@@ -54,6 +54,10 @@ func main() {
 	r.HandleFunc("/user/new", controllers.RegisterUser).Methods("POST")
 	r.HandleFunc("/user/login", controllers.LoginUser).Methods("POST")
 
+	// Users routes
+	r.HandleFunc("/users", controllers.GetAllUsers).Methods("GET")
+	r.HandleFunc("/user/{id}", controllers.GetUserByID).Methods("GET")
+
 	// Start server
 	fmt.Println("Server is running: 127.0.0.1:8080 🏃")
 	if err := http.ListenAndServe(":8080", r); err != nil {
