@@ -122,7 +122,7 @@ func GetUserByEmail(email string) (*models.User, string) {
 
 	var u *models.User
 	if err := col.FindOne(ctx, filter).Decode(&u); err != nil {
-		return u, "Error getting the user by ID ❌"
+		return u, "Error getting the user by email ❌"
 	}
 
 	return u, ""

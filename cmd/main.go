@@ -59,8 +59,8 @@ func main() {
 	r.HandleFunc("/users", controllers.DeleteAllUsers).Methods("DELETE")
 	r.HandleFunc("/user/{id}", controllers.GetUserByID).Methods("GET")
 	r.HandleFunc("/user/{id}", controllers.DeleteUserByID).Methods("DELETE")
-	r.HandleFunc("/user/{username}", controllers.GetUserByUsername).Methods("GET")
-	r.HandleFunc("/user/{email}", controllers.GetUserByEmail).Methods("GET")
+	r.HandleFunc("/user/username/{username}", controllers.GetUserByUsername).Methods("GET")
+	r.HandleFunc("/user/email/{email}", controllers.GetUserByEmail).Methods("GET")
 
 	// Start server
 	fmt.Println("Server is running: 127.0.0.1:8080 🏃")
