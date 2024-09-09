@@ -84,6 +84,55 @@ func GetUserByID(w http.ResponseWriter, r *http.Request) {
 	utils.SendHttpJSONResponse(w, http.StatusOK, u)
 }
 
+func GetUserByEmail(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
+
+	e, ok := mux.Vars(r)["email"]
+	if (!ok) || (e == "") {
+		errors.SendJSONErrorResponse(w, "Please give an 'email' parameter ❌", http.StatusBadRequest)
+		return
+	}
+
+	v := validation.IsValidEmail(e)
+	if !v {
+		errors.SendJSONErrorResponse(w, "'email' is not valid ❌", http.StatusBadRequest)
+		return
+	}
+
+	var u *models.User
+	u, s := services.GetUserByEmail(e)
+	if s != "" {
+		errors.SendJSONErrorResponse(w, s, http.StatusInternalServerError)
+		return
+	}
+
+	utils.SendHttpJSONResponse(w, http.StatusOK, u)
+}
+
+func GetUserByUsername(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
+
+	uName, ok := mux.Vars(r)["username"]
+	if (!ok) || (uName == "") {
+		errors.SendJSONErrorResponse(w, "Please give an 'username' parameter ❌", http.StatusBadRequest)
+		return
+	}
+
+	if s := validation.IsValidUsername(uName); s != "" {
+		errors.SendJSONErrorResponse(w, s, http.StatusBadRequest)
+		return
+	}
+
+	var u *models.User
+	u, s := services.GetUserByUsername(uName)
+	if s != "" {
+		errors.SendJSONErrorResponse(w, s, http.StatusInternalServerError)
+		return
+	}
+
+	utils.SendHttpJSONResponse(w, http.StatusOK, u)
+}
+
 func GetAllUsers(w http.ResponseWriter, r *http.Request) {
 	allU, s := services.GetAllUsers()
 	if s != "" {

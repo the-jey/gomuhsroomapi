@@ -95,3 +95,20 @@ func IsValidEmail(e string) bool {
 	_, err := mail.ParseAddress(e)
 	return err == nil
 }
+
+func IsValidUsername(u string) string {
+	if u == "" {
+		s := "Please put an 'username' field ❌"
+		return s
+	}
+	if !CheckUsernameExist(u) {
+		s := "'username' doesn't exist ❌"
+		return s
+	}
+	if (len(u) < 3) || (len(u) > 224) {
+		s := "'Username' must be between 3 and 224 characters ❌"
+		return s
+	}
+
+	return ""
+}
