@@ -9,6 +9,7 @@ import (
 	"github.com/the-jey/gomushroomapi/models"
 	"github.com/the-jey/gomushroomapi/services"
 	"github.com/the-jey/gomushroomapi/utils"
+	"github.com/the-jey/gomushroomapi/validation"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -18,6 +19,13 @@ func CreateMushroom(w http.ResponseWriter, r *http.Request) {
 	var m models.Mushroom
 	if err := json.NewDecoder(r.Body).Decode(&m); err != nil {
 		errors.SendJSONErrorResponse(w, "Error parsing JSON data ❌", http.StatusBadRequest)
+		return
+	}
+
+	// Mushroom model validation
+	s := validation.CreateMushroomValidation(&m)
+	if s != "" {
+		errors.SendJSONErrorResponse(w, s, http.StatusBadRequest)
 		return
 	}
 
@@ -125,7 +133,14 @@ func UpdateMushroomByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	s := services.UpdateMushroomByID(mongoID, m)
+	// Validation the updateMushroom
+	s := validation.UpdateMushroomValidation(&m)
+	if s != "" {
+		errors.SendJSONErrorResponse(w, s, http.StatusBadRequest)
+		return
+	}
+
+	s = services.UpdateMushroomByID(mongoID, m)
 	if s != "" {
 		errors.SendJSONErrorResponse(w, s, http.StatusInternalServerError)
 		return

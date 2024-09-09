@@ -57,7 +57,27 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func LoginUser(w http.ResponseWriter, r *http.Request) {
-	// TODO: with JWT token implementation
+	defer r.Body.Close()
+
+	// Get the date from the body
+	var lp models.LoginPayload
+	if err := json.NewDecoder(r.Body).Decode(&lp); err != nil {
+		errors.SendJSONErrorResponse(w, "You need to pass an 'username' or 'email' with a password field ❌", http.StatusBadRequest)
+		return
+	}
+
+	// Verify the payload
+	id, s, code := validation.LoginValidationPayload(&lp)
+	if s != "" {
+		errors.SendJSONErrorResponse(w, s, code)
+		return
+	}
+
+	// TODO: Get the user by id
+
+	// TODO: Compare the password from the payload with the user password
+
+	// TODO: Create a JWT token and pass to the user
 }
 
 func GetUserByID(w http.ResponseWriter, r *http.Request) {

@@ -6,18 +6,11 @@ import (
 
 	"github.com/the-jey/gomushroomapi/db"
 	"github.com/the-jey/gomushroomapi/models"
-	"github.com/the-jey/gomushroomapi/validation"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func NewMushroom(m models.Mushroom) (primitive.ObjectID, string) {
-	// Mushroom model validation
-	s := validation.CreateMushroomValidation(&m)
-	if s != "" {
-		return primitive.NilObjectID, s
-	}
-
 	// CreatedAt & UpdatedAt field
 	m.CreatedAt = time.Now()
 	m.UpdatedAt = time.Now()
@@ -143,12 +136,6 @@ func DeleteAllMushrooms() (int64, string) {
 }
 
 func UpdateMushroomByID(id primitive.ObjectID, m models.Mushroom) string {
-	// Mushroom model update validation
-	s := validation.UpdateMushroomValidation(&m)
-	if s != "" {
-		return s
-	}
-
 	// Update the time
 	m.UpdatedAt = time.Now()
 

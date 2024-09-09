@@ -2,12 +2,15 @@ package validation
 
 import (
 	"context"
+	"net/http"
 	"net/mail"
 	"time"
 
 	"github.com/the-jey/gomushroomapi/db"
 	"github.com/the-jey/gomushroomapi/models"
+	"github.com/the-jey/gomushroomapi/services"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -111,4 +114,48 @@ func IsValidUsername(u string) string {
 	}
 
 	return ""
+}
+
+func LoginValidationPayload(lp *models.LoginPayload) (primitive.ObjectID, string, int) {
+	if lp.Email == "" && lp.Username == "" {
+		return primitive.NilObjectID, "'email' or 'username' invalid ❌", http.StatusBadRequest
+	}
+
+	// Login with email
+	if lp.Email != "" {
+		// Check if email is valid
+		if !IsValidEmail(lp.Email) {
+			return primitive.NilObjectID, "'email' is invalid ❌", http.StatusBadRequest
+		}
+
+		// Get the user by 'email' field and return the ID
+		u, s := services.GetUserByEmail(lp.Email)
+		if s != "" {
+			return primitive.NilObjectID, s, http.StatusBadRequest
+		}
+
+		return u.ID, "", http.StatusOK
+	}
+
+	// Login with username here
+	if lp.Username != "" {
+
+		// Check if the username is valid
+		s := IsValidUsername(lp.Username)
+		if s != "" {
+			return primitive.NilObjectID, s, http.StatusBadRequest
+		}
+
+		// Get the user by Username
+		u, s := services.GetUserByUsername(lp.Username)
+		if s != "" {
+			return primitive.NilObjectID, s, http.StatusBadRequest
+		}
+
+		return u.ID, "", http.StatusOK
+	}
+
+	// TODO: validation of the payload 'password' field
+
+	return primitive.NilObjectID, "login action failed ❌", http.StatusInternalServerError
 }
