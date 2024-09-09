@@ -93,3 +93,13 @@ func GetAllUsers(w http.ResponseWriter, r *http.Request) {
 
 	utils.SendHttpJSONResponse(w, http.StatusOK, allU)
 }
+
+func DeleteAllUsers(w http.ResponseWriter, r *http.Request) {
+	_, s := services.DeleteAllUsers()
+	if s != "" {
+		errors.SendJSONErrorResponse(w, s, http.StatusInternalServerError)
+		return
+	}
+
+	utils.SendHttpJSONResponse(w, http.StatusNoContent, nil)
+}

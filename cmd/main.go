@@ -56,6 +56,7 @@ func main() {
 
 	// Users routes
 	r.HandleFunc("/users", controllers.GetAllUsers).Methods("GET")
+	r.HandleFunc("/users", controllers.DeleteAllUsers).Methods("DELETE")
 	r.HandleFunc("/user/{id}", controllers.GetUserByID).Methods("GET")
 
 	// Start server

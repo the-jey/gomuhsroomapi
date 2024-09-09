@@ -127,3 +127,27 @@ func GetUserByEmail(email string) (*models.User, string) {
 
 	return u, ""
 }
+
+func DeleteAllUsers() (int64, string) {
+	// Get User collection
+	col := db.GetUsersCollection()
+
+	// Create & defer context
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	// Delete all the documents
+	res, err := col.DeleteMany(ctx, bson.M{})
+	if err != nil {
+		return 0, "Error deleting all the users ❌"
+	}
+
+	// Check if count == 0
+	count := res.DeletedCount
+	if count == 0 {
+		return count, "Error deleting all the users ❌"
+	}
+
+	// Return number of document deleted
+	return res.DeletedCount, ""
+}
