@@ -103,3 +103,27 @@ func DeleteAllUsers(w http.ResponseWriter, r *http.Request) {
 
 	utils.SendHttpJSONResponse(w, http.StatusNoContent, nil)
 }
+
+func DeleteUserByID(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
+
+	id, ok := mux.Vars(r)["id"]
+	if (!ok) || (id == "") {
+		errors.SendJSONErrorResponse(w, "Please give a valid id ❌", http.StatusBadRequest)
+		return
+	}
+
+	mongoID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		errors.SendJSONErrorResponse(w, "Please give a valid 'id' field ❌", http.StatusBadRequest)
+		return
+	}
+
+	_, s := services.DeleteUserByID(mongoID)
+	if s != "" {
+		errors.SendJSONErrorResponse(w, s, http.StatusInternalServerError)
+		return
+	}
+
+	utils.SendHttpJSONResponse(w, http.StatusNoContent, nil)
+}

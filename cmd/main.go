@@ -58,6 +58,7 @@ func main() {
 	r.HandleFunc("/users", controllers.GetAllUsers).Methods("GET")
 	r.HandleFunc("/users", controllers.DeleteAllUsers).Methods("DELETE")
 	r.HandleFunc("/user/{id}", controllers.GetUserByID).Methods("GET")
+	r.HandleFunc("/user/{id}", controllers.DeleteUserByID).Methods("DELETE")
 
 	// Start server
 	fmt.Println("Server is running: 127.0.0.1:8080 🏃")
