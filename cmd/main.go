@@ -11,6 +11,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/the-jey/gomushroomapi/controllers"
 	"github.com/the-jey/gomushroomapi/db"
+	"github.com/the-jey/gomushroomapi/middlewares"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
@@ -55,7 +56,8 @@ func main() {
 	r.HandleFunc("/user/login", controllers.LoginUser).Methods("POST")
 
 	// Users routes
-	r.HandleFunc("/users", controllers.GetAllUsers).Methods("GET")
+	// r.Handle("/users", middlewares.IsLogin(http.HandlerFunc(controllers.GetAllUsers))).Methods("GET")
+	r.HandleFunc("/users", middlewares.IsLogin(controllers.GetAllUsers)).Methods("GET")
 	r.HandleFunc("/users", controllers.DeleteAllUsers).Methods("DELETE")
 	r.HandleFunc("/user/{id}", controllers.GetUserByID).Methods("GET")
 	r.HandleFunc("/user/{id}", controllers.DeleteUserByID).Methods("DELETE")

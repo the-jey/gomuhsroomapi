@@ -16,7 +16,7 @@ type ResponseTokenPayload struct {
 func CreateJWTToken(id primitive.ObjectID) (string, error) {
 	jwtSecret := os.Getenv("JWT_SECRET")
 	if jwtSecret == "" {
-		return "", errors.New("an't creata a JWT token, cause 'JWT_SECRET' in .env is missing ❌")
+		return "", errors.New("can't create a JWT token, cause 'JWT_SECRET' in .env is missing ❌")
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
@@ -30,4 +30,26 @@ func CreateJWTToken(id primitive.ObjectID) (string, error) {
 	}
 
 	return tString, nil
+}
+
+func VerifyJWTToken(tString string) error {
+	jwtSecret := os.Getenv("JWT_SECRET")
+	if jwtSecret == "" {
+		return errors.New("can't verify a JWT token, cause 'JWT_SECRET' in .env is missing ❌")
+	}
+
+	// Parse the JWT token
+	token, err := jwt.Parse(tString, func(t *jwt.Token) (interface{}, error) {
+		return []byte(jwtSecret), nil
+	})
+	if err != nil {
+		return errors.New("can't verify a JWT token, error during parsing ❌")
+	}
+
+	// Verify token is valid
+	if !token.Valid {
+		return errors.New("JWT token is invalid ❌")
+	}
+
+	return nil
 }

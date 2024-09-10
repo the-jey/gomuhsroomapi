@@ -93,7 +93,6 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 		errors.SendJSONErrorResponse(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
 	var t utils.ResponseTokenPayload
 	t.Token = tokenString
 
