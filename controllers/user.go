@@ -11,6 +11,7 @@ import (
 	"github.com/the-jey/gomushroomapi/utils"
 	"github.com/the-jey/gomushroomapi/validation"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func RegisterUser(w http.ResponseWriter, r *http.Request) {
@@ -73,11 +74,30 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO: Get the user by id
+	// Get the user by id
+	u, s := services.GetUserByID(id)
+	if s != "" {
+		errors.SendJSONErrorResponse(w, s, http.StatusInternalServerError)
+		return
+	}
 
-	// TODO: Compare the password from the payload with the user password
+	// Compare the password from the payload with the user password
+	if err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(lp.Password)); err != nil {
+		errors.SendJSONErrorResponse(w, "Bad credentials", http.StatusBadRequest)
+		return
+	}
 
-	// TODO: Create a JWT token and pass to the user
+	// Create a JWT token and pass to the user
+	tokenString, err := utils.CreateJWTToken(u.ID)
+	if err != nil {
+		errors.SendJSONErrorResponse(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	var t utils.ResponseTokenPayload
+	t.Token = tokenString
+
+	utils.SendHttpJSONResponse(w, http.StatusOK, t)
 }
 
 func GetUserByID(w http.ResponseWriter, r *http.Request) {
