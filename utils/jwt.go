@@ -2,7 +2,6 @@ package utils
 
 import (
 	"errors"
-	"fmt"
 	"os"
 	"time"
 
@@ -56,10 +55,12 @@ func VerifyJWTToken(tString string) error {
 }
 
 func ParseClaimsToken(tString string) (primitive.ObjectID, error) {
-	t, _ := jwt.Parse(tString, nil)
+	t, err := jwt.Parse(tString, nil)
+	if err != nil {
+		return primitive.NilObjectID, errors.New("error parsing JWT token ❌")
+	}
 	c, _ := t.Claims.(jwt.MapClaims)
 	id := c["id"].(string)
-	fmt.Println(id)
 
 	return primitive.ObjectIDFromHex(id)
 }
