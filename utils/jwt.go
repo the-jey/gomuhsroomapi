@@ -2,6 +2,7 @@ package utils
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"time"
 
@@ -20,7 +21,7 @@ func CreateJWTToken(id primitive.ObjectID) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"id":  id.String(),
+		"id":  id.Hex(),
 		"exp": time.Now().Add(time.Hour * 24).Unix(),
 	})
 
@@ -52,4 +53,13 @@ func VerifyJWTToken(tString string) error {
 	}
 
 	return nil
+}
+
+func ParseClaimsToken(tString string) (primitive.ObjectID, error) {
+	t, _ := jwt.Parse(tString, nil)
+	c, _ := t.Claims.(jwt.MapClaims)
+	id := c["id"].(string)
+	fmt.Println(id)
+
+	return primitive.ObjectIDFromHex(id)
 }
