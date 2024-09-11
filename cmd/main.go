@@ -7,11 +7,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
-	"github.com/the-jey/gomushroomapi/controllers"
 	"github.com/the-jey/gomushroomapi/db"
-	"github.com/the-jey/gomushroomapi/middlewares"
+	"github.com/the-jey/gomushroomapi/router"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
@@ -37,31 +35,8 @@ func main() {
 		fmt.Println("Database successfully connected ✅")
 	}
 
-	// Create new router
-	r := mux.NewRouter()
-
-	// Hello, World route!
-	r.HandleFunc("/", controllers.Home).Methods("GET")
-
-	// Mushrooms routes
-	r.HandleFunc("/mushrooms", controllers.GetAllMushrooms).Methods("GET")
-	r.HandleFunc("/mushrooms", controllers.DeleteAllMushrooms).Methods("DELETE")
-	r.HandleFunc("/mushroom", controllers.CreateMushroom).Methods("POST")
-	r.HandleFunc("/mushroom/{id}", controllers.GetOneMushroomByID).Methods("GET")
-	r.HandleFunc("/mushroom/{id}", controllers.UpdateMushroomByID).Methods("PUT")
-	r.HandleFunc("/mushroom/{id}", controllers.DeleteOneMushroomByID).Methods("DELETE")
-
-	// Auth routes
-	r.HandleFunc("/user/new", controllers.RegisterUser).Methods("POST")
-	r.HandleFunc("/user/login", controllers.LoginUser).Methods("POST")
-
-	// Users routes
-	r.HandleFunc("/users", middlewares.IsAdmin(controllers.GetAllUsers)).Methods("GET")
-	r.HandleFunc("/users", middlewares.IsAdmin(controllers.DeleteAllUsers)).Methods("DELETE")
-	r.HandleFunc("/user/{id}", middlewares.IsAdmin(controllers.GetUserByID)).Methods("GET")
-	r.HandleFunc("/user/{id}", middlewares.IsAdmin(controllers.DeleteUserByID)).Methods("DELETE")
-	r.HandleFunc("/user/username/{username}", middlewares.IsAdmin(controllers.GetUserByUsername)).Methods("GET")
-	r.HandleFunc("/user/email/{email}", middlewares.IsAdmin(controllers.GetUserByEmail)).Methods("GET")
+	// Create a router
+	r := router.New()
 
 	// Start server
 	fmt.Println("Server is running: 127.0.0.1:8080 🏃")
